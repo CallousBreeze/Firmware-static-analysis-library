@@ -6,7 +6,7 @@
 解包，提取出文件系统
 
 ```bash
-    binwalk -Me GORTAC750_A1_FW_v101b03.bin
+binwalk -Me GORTAC750_A1_FW_v101b03.bin
 ```
 
 使用FirmAE仿真
