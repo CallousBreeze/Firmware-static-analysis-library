@@ -2,7 +2,7 @@
 
 ## 仿真模拟
 
-[固件下载地址](https://bbs.kanxue.com/attach-download-316269-08a1222a3a5e42de154139c9cec3ccf8@IQVEcciOwgCNCL4EcDiFhw_3D_3D-406480.htm)  
+[固件下载地址](https://bbs.kanxue.com/thread-278294.htm#msg_header_h3_2)  
 解包，提取出文件系统
 
 ```bash
