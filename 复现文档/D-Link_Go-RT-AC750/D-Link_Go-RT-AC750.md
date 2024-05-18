@@ -5,33 +5,33 @@
 ## 仿真模拟
 
 [固件下载地址](https://bbs.kanxue.com/attach-download-316269-08a1222a3a5e42de154139c9cec3ccf8@IQVEcciOwgCNCL4EcDiFhw_3D_3D-406480.htm)
-解包，提取出文件系统
+解包，提取出文件系统  
 
 ```bash
     binwalk -Me GORTAC750_A1_FW_v101b03.bin
 ```
 
-使用FirmAE仿真
+使用FirmAE仿真  
 
 ```bash
 sudo ./run.sh -d d-link '/home/iot/Go-RT-AC750/GORTAC750_A1_FW_v101b03.bin' 
 ```
 
-![alt text](image.png)
-扫描端口发现一个未知端口49152
-![alt text](image-1.png)
-在shell中查看/var/run/httpd.conf可知这是一个upnp服务端口
-![alt text](image-2.png)
+![alt text](image.png)  
+扫描端口发现一个未知端口49152  
+![alt text](image-1.png)  
+在shell中查看/var/run/httpd.conf可知这是一个upnp服务端口  
+![alt text](image-2.png)  
 
 ## 固件分析
 
 ### CVE-2023-34800
 
-[CVE-2023-34800](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-34800)
-查看cve官网的表述可知此cve是通过genacgi_main函数实现命令注入漏洞。其属于cwe-78：Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
-查找genacgi_main函数发现其在文件htdocs/cgibin中，将其放进Ghidra中查看genacgi_main函数。
-![alt text](image-3.png)  
-![alt text](image-4.png)  
+[CVE-2023-34800](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2023-34800)  
+查看cve官网的表述可知此cve是通过genacgi_main函数实现命令注入漏洞。其属于cwe-78：Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')  
+查找genacgi_main函数发现其在文件htdocs/cgibin中，将其放进Ghidra中查看genacgi_main函数。  
+![alt text](image-3.png)    
+![alt text](image-4.png)   
 
 查看genacgi_main函数发现其检索REQUEST_URI并查找'?'字符，如果URI包含"?service="，则检查请求方法:  
 &#8195; 如果方法是"SUBSCRIBE"，则调用FUN_0040e700函数，并处理订阅请求。  
@@ -109,8 +109,8 @@ sleep(10)
 system('telnet 192.168.0.1 7080')
 ```
 
-漏洞利用成功后，即可通过telnetd连接设备，然后执行任意命令。
-![alt text](image-7.png)
+漏洞利用成功后，即可通过telnetd连接设备，然后执行任意命令。  
+![alt text](image-7.png)  
 
 ### CVE-2023-26822
 
@@ -227,7 +227,7 @@ if (stream) {
 
 ### CVE-2022-37057
 
-[cve链接](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-37057)
+[cve链接](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-37057)  
 D-Link Go-RT-AC750 GORTAC750_revA_v101b03 和 GO-RT-AC750_revB_FWv200b02 容易受到通过 cgibin 对ssdpcgi_main函数进行命令注入的攻击。  
 cwe-78:  Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')  
 漏洞分析：
@@ -272,9 +272,9 @@ sh /some/path/; rm -rf / ;.sh > /dev/console
 
 ### CVE-2022-36523
 
-[cve链接](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-36523)
+[cve链接](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-36523)  
 D-Link Go-RT-AC750 GORTAC750_revA_v101b03 和 GO-RT-AC750_revB_FWv200b02 容易受到通过 /htdocs/upnpinc/gena.php 进行命令注入的攻击。  
 cwe-77: Improper Neutralization of Special Elements used in a Command ('Command Injection')  
 此漏洞和/htdocs/upnpinc/gena.php文件有关。貌似和前面的CVE-2023-34800漏洞一样啊，还是执行rm -f shell_file命令删除shell_file文件，但shell_file可通过SUBSCRIBE传入的服务参数进行控制并且全程没有任何对服务参数的检查，从而可实现命令注入。  
 
-难绷,cve2022的漏洞居然能留到2023一直不修改。
+难绷,cve2022的漏洞居然能留到2023一直不修改。  
